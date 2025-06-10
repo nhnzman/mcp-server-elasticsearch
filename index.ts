@@ -362,15 +362,15 @@ return {
   })),
 };
 */
-return {
-  content: result.hits.hits.map((hit) => ({
-    type: "text" as const,
-    text: Object.entries(hit._source)
-      .map(([key, value]) => `${key}: ${typeof value === "string" ? value.replace(/\n/g, ' ') : JSON.stringify(value)}`)
-      .join('\n')
-  }))
-};
-
+        return {
+          content: result.hits.hits.map((hit) => ({
+            type: "text" as const,
+            text: Object.entries(hit._source)
+              .map(([key, value]) => `${key}: ${typeof value === "string" ? value.replace(/\n/g, ' ') : JSON.stringify(value)}`)
+              .join('\n')
+          }))
+        };
+        
 
       } catch (error) {
         console.error(
