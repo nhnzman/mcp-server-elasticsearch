@@ -356,6 +356,18 @@ export async function createElasticsearchMcpServer(
           }
 
           return {
+            type: "resource" as const,
+            resource: {
+              uri: "data:application/json;base64," + Buffer.from(JSON.stringify({
+                ...sourceData,
+                highlight: highlightedFields,
+              })).toString("base64"),
+              mimeType: "application/json",
+            },
+          };
+
+/*
+          return {
             type: "json" as const,
             data: {
               ...sourceData,
