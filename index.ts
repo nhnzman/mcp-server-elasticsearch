@@ -355,23 +355,27 @@ export async function createElasticsearchMcpServer(
             }
           }
 
-const contentFragments = result.hits.hits.flatMap((hit): { type: "resource"; resource: { uri: string; blob: string; mimeType: string } }[] => {
+const contentFragments = result.hits.hits.map((hit) => {
   const highlightedFields = hit.highlight || {};
   const sourceData = hit._source || {};
 
-  return [
-    {
-      type: "resource",
-      resource: {
-        uri: `${index}_${hit._id}.json`,
-        blob: Buffer.from(JSON.stringify({
-          ...sourceData,
-          highlight: highlightedFields,
-        }, null, 2)).toString("base64"),
-        mimeType: "application/json",
-      },
+  return {
+    type: "resource" as const,
+    resource: {
+      uri: `${index}_${hit._id}.json`,
+      blob: Buffer.from(
+        JSON.stringify(
+          {
+            ...sourceData,
+            highlight: highlightedFields,
+          },
+          null,
+          2
+        )
+      ).toString("base64"),
+      mimeType: "application/json",
     },
-  ];
+  };
 });
 
 
