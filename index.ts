@@ -355,29 +355,23 @@ export async function createElasticsearchMcpServer(
             }
           }
 
-const contentFragments = result.hits.hits.map((hit) => {
-  const highlightedFields = hit.highlight || {};
-  const sourceData = hit._source || {};
+const contentFragments = result.hits.hits
+  .map((hit) => {
+    const sourceData = hit._source;
+    if (!sourceData) return null; // 또는 return undefined;
 
-  return {
-    type: "resource" as const,
-    resource: {
-      uri: `${index}_${hit._id}.json`,
-      blob: Buffer.from(
-        JSON.stringify(
-          {
-            ...sourceData,
-            highlight: highlightedFields,
-          },
-          null,
-          2
-        )
-      ).toString("base64"),
-      mimeType: "application/json",
-    },
-  };
-});
-
+    return {
+      type: "resource" as const,
+      resource: {
+        uri: `${index}_${hit._id}.json`,
+        blob: Buffer.from(
+          JSON.stringify({ ...sourceData }, null, 2)
+        ).toString("base64"),
+        mimeType: "application/json",
+      },
+    };
+  })
+  .filter(Boolean); // ← 이게 핵심!
 
 
 
