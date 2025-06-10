@@ -354,60 +354,20 @@ export async function createElasticsearchMcpServer(
               content += `${field}: ${JSON.stringify(value)}\n`;
             }
           }
-
-
 /*
-          return {
-            content: [
-              {
-                type: "resource" as const,
-                resource: {
-                  uri: "qna_sparse_result.json",
-                  blob: Buffer.from(
-                    JSON.stringify({
-                      ...sourceData,
-                      highlight: highlightedFields,
-                    }, null, 2)
-                  ).toString("base64"),
-                  mimeType: "application/json",
-                },
-              },
-            ],
-          };
-
-/*
-          return {
-            type: "resource" as const,
-            resource: {
-              uri: "data:application/json;base64," + Buffer.from(JSON.stringify({
-                ...sourceData,
-                highlight: highlightedFields,
-              })).toString("base64"),
-              mimeType: "application/json",
-            },
-          };
-
-/*
-          return {
-            type: "json" as const,
-            data: {
-              ...sourceData,
-              highlight: highlightedFields,
-            },
-          };
-
-/*
-          return {
-            type: "text" as const,
-            text: content.trim(),
-          };
-*/
-        });
-
 return {
   content: result.hits.hits.map((hit, idx) => ({
     type: "text" as const,
     text: `[${idx + 1}] ID: ${hit._id}\n${JSON.stringify(hit._source, null, 2)}`,
+  })),
+};
+*/
+return {
+  content: result.hits.hits.map((hit) => ({
+    type: "text" as const,
+    text: Object.entries(hit._source)
+      .map(([key, value]) => `${key}: ${typeof value === "string" ? value.replace(/\n/g, ' ') : JSON.stringify(value)}`)
+      .join('\n'),
   })),
 };
 
