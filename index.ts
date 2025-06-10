@@ -367,6 +367,11 @@ export async function createElasticsearchMcpServer(
           }, showing ${result.hits.hits.length} from position ${from}`,
         };
 
+        console.log("-------------------- check --------------------:", JSON.stringify({
+          content: [metadataFragment, ...contentFragments]
+        }, null, 2));
+
+
         return {
           content: [metadataFragment, ...contentFragments],
         };
