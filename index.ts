@@ -407,9 +407,10 @@ export async function createElasticsearchMcpServer(
 return {
   content: result.hits.hits.map((hit, idx) => ({
     type: "text" as const,
-    text: [${idx + 1}] ID: ${hit._id}\n${JSON.stringify(hit._source, null, 2)},
+    text: `[${idx + 1}] ID: ${hit._id}\n${JSON.stringify(hit._source, null, 2)}`,
   })),
 };
+
 
       } catch (error) {
         console.error(
