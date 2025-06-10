@@ -427,7 +427,7 @@ const contentFragments = result.hits.hits
         });
 
         console.log("-------------------- check --------------------:", JSON.stringify({
-          content: [metadataFragment, ...contentFragments]
+          contentFragments
         }, null, 2));
 
 return {
