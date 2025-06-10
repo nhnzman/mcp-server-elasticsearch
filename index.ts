@@ -373,6 +373,7 @@ export async function createElasticsearchMcpServer(
         console.log("-------------------- check --------------------:", JSON.stringify({
           content: [metadataFragment, ...contentFragments]
         }, null, 2));
+        process.stdout.write("---------------------------------");
 
 
         return {
