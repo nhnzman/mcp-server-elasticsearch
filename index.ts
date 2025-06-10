@@ -355,22 +355,6 @@ export async function createElasticsearchMcpServer(
             }
           }
 
-const contentFragments = result.hits.hits.flatMap((hit) => {
-  const sourceData = hit._source;
-  if (!sourceData) return [];
-  return [
-    {
-      type: "resource" as const,
-      resource: {
-        uri: `${index}_${hit._id}.json`,
-        blob: Buffer.from(JSON.stringify(sourceData, null, 2)).toString("base64"),
-        mimeType: "application/json",
-      },
-    },
-  ];
-});
-
-
 
 /*
           return {
@@ -420,22 +404,11 @@ const contentFragments = result.hits.hits.flatMap((hit) => {
 */
         });
 
-        console.log("-------------------- check --------------------:", JSON.stringify({
-          contentFragments
-        }, null, 2));
-
 return {
-  content: [
-    {
-      type: "text" as const,
-      text: `Total results: ${
-        typeof result.hits.total === "number"
-          ? result.hits.total
-          : result.hits.total?.value || 0
-      }, showing ${result.hits.hits.length} from position ${from}`,
-    },
-    ...contentFragments,
-  ],
+  content: result.hits.hits.map((hit, idx) => ({
+    type: "text" as const,
+    text: [${idx + 1}] ID: ${hit._id}\n${JSON.stringify(hit._source, null, 2)},
+  })),
 };
 
       } catch (error) {
