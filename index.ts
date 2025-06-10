@@ -368,7 +368,7 @@ return {
     text: Object.entries(hit._source)
       .map(([key, value]) => `${key}: ${typeof value === "string" ? value.replace(/\n/g, ' ') : JSON.stringify(value)}`)
       .join('\n'),
-  })),
+  }))
 };
 
 
