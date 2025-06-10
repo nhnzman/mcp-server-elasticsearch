@@ -355,26 +355,25 @@ export async function createElasticsearchMcpServer(
             }
           }
 
-const contentFragments = result.hits.hits
-  .map((hit) => {
-    const highlightedFields = hit.highlight || {};
-    const sourceData = hit._source || {};
+const contentFragments = result.hits.hits.flatMap((hit): { type: "resource"; resource: { uri: string; blob: string; mimeType: string } }[] => {
+  const highlightedFields = hit.highlight || {};
+  const sourceData = hit._source || {};
 
-    return {
-      type: "resource" as const,
+  return [
+    {
+      type: "resource",
       resource: {
         uri: `${index}_${hit._id}.json`,
-        blob: Buffer.from(
-          JSON.stringify({
-            ...sourceData,
-            highlight: highlightedFields,
-          }, null, 2)
-        ).toString("base64"),
+        blob: Buffer.from(JSON.stringify({
+          ...sourceData,
+          highlight: highlightedFields,
+        }, null, 2)).toString("base64"),
         mimeType: "application/json",
       },
-    };
-  })
-  .filter((entry): entry is { type: "resource"; resource: any } => !!entry); // 🔥 핵심: undefined 제거
+    },
+  ];
+});
+
 
 
 
