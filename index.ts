@@ -118,9 +118,10 @@ export async function createElasticsearchMcpServer(
     headers: {
       "user-agent": `${product.name}/${product.version}`,
       "accept": "application/vnd.elasticsearch+json; compatible-with=8",
-      "content-type": "application/json"
+      "content-type": "application/vnd.elasticsearch+json; compatible-with=8"
     },
   };
+
 
   if (pathPrefix) {
     const verifiedPathPrefix = pathPrefix;
