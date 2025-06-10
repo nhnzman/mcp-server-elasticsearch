@@ -117,6 +117,8 @@ export async function createElasticsearchMcpServer(
     node: url,
     headers: {
       "user-agent": `${product.name}/${product.version}`,
+      "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+      "content-type": "application/json"
     },
   };
 
