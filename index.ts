@@ -354,7 +354,25 @@ export async function createElasticsearchMcpServer(
               content += `${field}: ${JSON.stringify(value)}\n`;
             }
           }
+          return {
+            content: [
+              {
+                type: "resource" as const,
+                resource: {
+                  uri: "qna_sparse_result.json",
+                  blob: Buffer.from(
+                    JSON.stringify({
+                      ...sourceData,
+                      highlight: highlightedFields,
+                    }, null, 2)
+                  ).toString("base64"),
+                  mimeType: "application/json",
+                },
+              },
+            ],
+          };
 
+/*
           return {
             type: "resource" as const,
             resource: {
