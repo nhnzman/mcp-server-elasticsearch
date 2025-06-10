@@ -355,31 +355,27 @@ export async function createElasticsearchMcpServer(
             }
           }
 
-          const contentFragments = result.hits.hits.flatMap((hit) => {
-            const highlightedFields = hit.highlight || {};
-            const sourceData = hit._source || {};
-          
-            return [
-              {
-                type: "resource" as const,
-                resource: {
-                  uri: `${index}_${hit._id}.json`,
-                  blob: Buffer.from(
-                    JSON.stringify(
-                      {
-                        ...sourceData,
-                        highlight: highlightedFields,
-                      },
-                      null,
-                      2
-                    )
-                  ).toString("base64"),
-                  mimeType: "application/json",
-                },
-              },
-            ];
-          });
-          
+const contentFragments = result.hits.hits
+  .map((hit) => {
+    const highlightedFields = hit.highlight || {};
+    const sourceData = hit._source || {};
+
+    return {
+      type: "resource" as const,
+      resource: {
+        uri: `${index}_${hit._id}.json`,
+        blob: Buffer.from(
+          JSON.stringify({
+            ...sourceData,
+            highlight: highlightedFields,
+          }, null, 2)
+        ).toString("base64"),
+        mimeType: "application/json",
+      },
+    };
+  })
+  .filter((entry): entry is { type: "resource"; resource: any } => !!entry); // 🔥 핵심: undefined 제거
+
 
 
 /*
@@ -430,23 +426,24 @@ export async function createElasticsearchMcpServer(
 */
         });
 
-        const metadataFragment = {
-          type: "text" as const,
-          text: `Total results: ${
-            typeof result.hits.total === "number"
-              ? result.hits.total
-              : result.hits.total?.value || 0
-          }, showing ${result.hits.hits.length} from position ${from}`,
-        };
-        
-        return {
-          content: [metadataFragment, ...contentFragments],
-        };
-
-
         console.log("-------------------- check --------------------:", JSON.stringify({
           content: [metadataFragment, ...contentFragments]
         }, null, 2));
+
+return {
+  content: [
+    {
+      type: "text" as const,
+      text: `Total results: ${
+        typeof result.hits.total === "number"
+          ? result.hits.total
+          : result.hits.total?.value || 0
+      }, showing ${result.hits.hits.length} from position ${from}`,
+    },
+    ...contentFragments,
+  ],
+};
+
       } catch (error) {
         console.error(
           `Search failed: ${
