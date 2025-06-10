@@ -356,9 +356,19 @@ export async function createElasticsearchMcpServer(
           }
 
           return {
+            type: "json" as const,
+            data: {
+              ...sourceData,
+              highlight: highlightedFields,
+            },
+          };
+
+/*
+          return {
             type: "text" as const,
             text: content.trim(),
           };
+*/
         });
 
         const metadataFragment = {
