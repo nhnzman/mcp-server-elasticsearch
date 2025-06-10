@@ -379,6 +379,7 @@ export async function createElasticsearchMcpServer(
               },
             ];
           });
+          
 
 
 /*
@@ -437,16 +438,15 @@ export async function createElasticsearchMcpServer(
               : result.hits.total?.value || 0
           }, showing ${result.hits.hits.length} from position ${from}`,
         };
+        
+        return {
+          content: [metadataFragment, ...contentFragments],
+        };
+
 
         console.log("-------------------- check --------------------:", JSON.stringify({
           content: [metadataFragment, ...contentFragments]
         }, null, 2));
-        process.stdout.write("---------------------------------");
-
-
-        return {
-          content: [metadataFragment, ...contentFragments],
-        };
       } catch (error) {
         console.error(
           `Search failed: ${
